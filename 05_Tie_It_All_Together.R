@@ -16,7 +16,10 @@ hitters_24 <- sample_sub |>
       select(player_mlb_id, birthYear, birthCountry, weight, height, bats, debut_year),
     by = join_by(PLAYER_ID == player_mlb_id)
   ) |>
-  mutate(birthCountry = as_factor(birthCountry), bats = as_factor(bats))
+  mutate(birthCountry = as_factor(birthCountry), bats = as_factor(bats)) |>
+  left_join(Penult_Hitter_FE_23, by = join_by(PLAYER_ID == penult_batter)) |>
+  left_join(Ante_Hitter_FE_22, by = join_by(PLAYER_ID == antepenult_batter))
+
 
 
 hitters_24$PLAYING_TIME <- predict(hitter_mod, hitters_24)$.pred
@@ -41,7 +44,9 @@ pitchers_24 <- sample_sub |>
       select(player_mlb_id, birthYear, birthCountry, weight, height, throws, debut_year),
     by = join_by(PLAYER_ID == player_mlb_id)
   ) |>
-  mutate(birthCountry = as_factor(birthCountry), throws = as_factor(throws))
+  mutate(birthCountry = as_factor(birthCountry), throws = as_factor(throws)) |>
+  left_join(Penult_Pitcher_FE_23, by = join_by(PLAYER_ID == penult_pitcher)) |>
+  left_join(Ante_Pitcher_FE_22, by = join_by(PLAYER_ID == antepenult_pitcher))
 
 
 pitchers_24$PLAYING_TIME <- predict(final_mod, pitchers_24)$.pred
@@ -59,7 +64,9 @@ pitchers_NAd <- zz |>
   ) |>
   mutate(PENULT = NA) |>
   filter(!is.na(ANTEPENULT)) |>
-  mutate(birthCountry = as_factor(birthCountry), throws = as_factor(throws))
+  mutate(birthCountry = as_factor(birthCountry), throws = as_factor(throws)) |>
+  left_join(Pitcher_FE_21, by = join_by(PLAYER_ID == antepenult_pitcher)) |>
+  left_join(Penult_Pitcher_FE_23, by = join_by(PLAYER_ID == penult_pitcher))
 
 pitchers_NAd$PLAYING_TIME <- (predict(final_mod, pitchers_NAd)$.pred) * 2 / 3
 
@@ -73,7 +80,9 @@ hitters_NAd <- zz |>
   ) |>
   mutate(PENULT = NA) |>
   filter(!is.na(ANTEPENULT)) |>
-  mutate(birthCountry = as_factor(birthCountry), bats = as_factor(bats))
+  mutate(birthCountry = as_factor(birthCountry), bats = as_factor(bats)) |>
+  left_join(Hitter_FE_21, by = join_by(PLAYER_ID == antepenult_batter)) |>
+  left_join(Penult_Hitter_FE_23, by = join_by(PLAYER_ID == penult_batter))
 
 hitters_NAd$PLAYING_TIME <- (predict(hitter_mod, hitters_NAd)$.pred) * 2 / 3
 
@@ -92,4 +101,4 @@ PREDS <- hitters_24 |>
   summarize(PLAYING_TIME = sum(PLAYING_TIME)) |>
   ungroup()
 
-# write_csv(PREDS, file = "submissions/submission_2-8-25_ONE.csv")
+# write_csv(PREDS, file = "submissions/submission_2-10-25_w_FE.csv")

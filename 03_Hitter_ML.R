@@ -7,13 +7,13 @@ library(stacks)
 
 
 set.seed(11042004)
-hitter_split <- initial_split(batters_23_enhanced, strata = ACTUAL_TIME)
+hitter_split <- initial_split(batters_23_hyper, strata = ACTUAL_TIME)
 hitter_train <- training(hitter_split)
 hitter_test <- testing(hitter_split)
 
 hitter_folds <- vfold_cv(hitter_train, strata = ACTUAL_TIME, repeats = 5)
 
-rec <-
+rec_1 <-
   recipe(ACTUAL_TIME ~ ., data = hitter_train) |>
   update_role(PLAYER_ID, new_role = "ID") |>
   step_dummy(all_nominal_predictors())
@@ -58,7 +58,7 @@ cubist_spec <-
 
 set <-
   workflow_set(
-    preproc = list(rec = rec),
+    preproc = list(rec = rec_1),
     models = list(
       neural_network = nnet_spec, CART = cart_spec, CART_bagged = bag_cart_spec,
       RF = rf_spec, boosting = xgb_spec, Cubist = cubist_spec
@@ -100,28 +100,23 @@ autoplot(
 
 best <-
   grid_results %>%
-  extract_workflow_set_result("rec_RF") %>%
+  extract_workflow_set_result("rec_boosting") %>%
   select_best(metric = "rmse")
 
 boosting_test_results <-
   grid_results %>%
-  extract_workflow("rec_RF") %>%
+  extract_workflow("rec_boosting") %>%
   finalize_workflow(best) %>%
   last_fit(split = hitter_split)
 collect_metrics(boosting_test_results)
 
+xgb_hitter_wf <-
+  workflow() |>
+  add_recipe(rec_1) |>
+  add_model(xgb_spec)
 
-hitter_stack <-
-  stacks() |>
-  add_candidates(grid_results)
-
-set.seed(11042004)
-ens <- blend_predictions(hitter_stack)
-
-ens <- fit_members(ens)
-
-ens_test_pred <-
-  predict(ens, hitter_test) |>
-  bind_cols(hitter_test)
-
-ens_test_pred |> rmse(ACTUAL_TIME, .pred)
+hitter_mod <- finalize_workflow(
+  xgb_hitter_wf,
+  best
+) |>
+  fit(data = hitter_train)

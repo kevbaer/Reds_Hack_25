@@ -7,7 +7,7 @@ library(stacks)
 
 
 set.seed(11042004)
-pitcher_split <- initial_split(pitchers_23_enhanced, strata = ACTUAL_TIME)
+pitcher_split <- initial_split(pitchers_23_hyper, strata = ACTUAL_TIME)
 pitcher_train <- training(pitcher_split)
 pitcher_test <- testing(pitcher_split)
 
@@ -58,7 +58,7 @@ cubist_spec <-
 
 set <-
   workflow_set(
-    preproc = list(rec = rec),
+    preproc = list(rec = rec_2),
     models = list(
       neural_network = nnet_spec, CART = cart_spec, CART_bagged = bag_cart_spec,
       RF = rf_spec, boosting = xgb_spec, Cubist = cubist_spec
