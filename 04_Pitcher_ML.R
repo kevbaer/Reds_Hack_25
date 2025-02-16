@@ -1,4 +1,5 @@
 source("02_prep.R")
+source("07_Pitcher_FE.R")
 
 library(tidymodels)
 library(baguette)
@@ -19,30 +20,6 @@ rec_2 <-
   step_dummy(all_nominal_predictors())
 
 
-nnet_spec <-
-  mlp(hidden_units = tune(), penalty = tune(), epochs = tune()) |>
-  set_engine("nnet", MaxNWts = 2600) |>
-  set_mode("regression")
-
-nnet_param <-
-  nnet_spec %>%
-  extract_parameter_set_dials() %>%
-  update(hidden_units = hidden_units(c(1, 27)))
-
-cart_spec <-
-  decision_tree(cost_complexity = tune(), min_n = tune()) |>
-  set_engine("rpart") |>
-  set_mode("regression")
-
-bag_cart_spec <-
-  bag_tree() |>
-  set_engine("rpart", times = 50L) |>
-  set_mode("regression")
-
-rf_spec <-
-  rand_forest(mtry = tune(), min_n = tune(), trees = 1000) |>
-  set_engine("ranger") |>
-  set_mode("regression")
 
 xgb_spec <-
   boost_tree(
@@ -52,16 +29,12 @@ xgb_spec <-
   set_engine("xgboost") |>
   set_mode("regression")
 
-cubist_spec <-
-  cubist_rules(committees = tune(), neighbors = tune()) |>
-  set_engine("Cubist")
 
 set <-
   workflow_set(
     preproc = list(rec = rec_2),
     models = list(
-      neural_network = nnet_spec, CART = cart_spec, CART_bagged = bag_cart_spec,
-      RF = rf_spec, boosting = xgb_spec, Cubist = cubist_spec
+      boosting = xgb_spec
     )
   )
 doParallel::registerDoParallel(cores = 5)
@@ -77,7 +50,7 @@ grid_results_2 <-
   workflow_map(
     seed = 11042004,
     resamples = pitcher_folds,
-    grid = 25,
+    grid = 50,
     control = grid_ctrl_2
   )
 grid_results_2

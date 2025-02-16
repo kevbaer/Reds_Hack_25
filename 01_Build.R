@@ -10,16 +10,16 @@ codebook_savant <- readxl::read_excel("Data/codebook.xlsx", "Baseball Savant")
 codebook_lahman <- readxl::read_excel("Data/codebook.xlsx", "Lahman")
 
 
-savant_23 <- duckplyr::duckplyr_df_from_csv("Data/savant_data_2021_2023.csv") |>
-  duckplyr::filter(game_year == 2023) |>
+savant_23 <- duckplyr::read_csv_duckdb("Data/savant_data_2021_2023.csv") |>
+  filter(game_year == 2023) |>
   as_tibble()
 
-savant_22 <- duckplyr::duckplyr_df_from_csv("Data/savant_data_2021_2023.csv") |>
-  duckplyr::filter(game_year == 2022) |>
+savant_22 <- duckplyr::read_csv_duckdb("Data/savant_data_2021_2023.csv") |>
+  filter(game_year == 2022) |>
   as_tibble()
 
-savant_21 <- duckplyr::duckplyr_df_from_csv("Data/savant_data_2021_2023.csv") |>
-  duckplyr::filter(game_year == 2021) |>
+savant_21 <- duckplyr::read_csv_duckdb("Data/savant_data_2021_2023.csv") |>
+  filter(game_year == 2021) |>
   as_tibble()
 
 batters_23_x <- tibble(PLAYER_ID = unique(savant_23$batter))
