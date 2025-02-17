@@ -2,9 +2,7 @@ source("02_prep.R")
 source("06_Batter_FE.R")
 
 library(tidymodels)
-library(baguette)
-library(rules)
-library(stacks)
+
 
 
 set.seed(11042004)
@@ -90,4 +88,4 @@ hitter_mod <- finalize_workflow(
   xgb_hitter_wf,
   best
 ) |>
-  fit(data = hitter_train)
+  fit(data = batters_23_hyper)

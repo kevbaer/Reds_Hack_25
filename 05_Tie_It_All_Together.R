@@ -101,4 +101,4 @@ PREDS <- hitters_24 |>
   summarize(PLAYING_TIME = sum(PLAYING_TIME)) |>
   ungroup()
 
-write_csv(PREDS, file = "submissions/submission_2-15-25_FINAL.csv")
+# write_csv(PREDS, file = "submissions/5_submission_2-16-25_FIXED_FINAL.csv")

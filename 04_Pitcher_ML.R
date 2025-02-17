@@ -2,9 +2,7 @@ source("02_prep.R")
 source("07_Pitcher_FE.R")
 
 library(tidymodels)
-library(baguette)
-library(rules)
-library(stacks)
+
 
 
 set.seed(11042004)
@@ -92,4 +90,4 @@ final_mod <- finalize_workflow(
   xgb_wf,
   best_2
 ) |>
-  fit(data = pitcher_train)
+  fit(data = pitchers_23_hyper)
