@@ -1,7 +1,13 @@
 # Reds Hackathon 2025: Predicting Future Playing Time
-The full submission can be viewed on Kaggle [here]()!
+
+In this Hackathon, I developed two ML models to predict future playing for pitchers and hitters from past statistics. I then used permutation based variable importance to inspect the top 10 features for each model to generate insights for front offices!
+
+The full submission can be viewed on Kaggle [here](https://www.kaggle.com/code/kevinbaer/predicting-future-playing-time)!
+
 By Kevin Baer, UCLA Second Year Undergraduate Student
+
 Feel free to reach out to me with any questions or connect with me on [LinkedIn](https://www.linkedin.com/in/kevinmbaer/) or [Email](mailto:kevinbaer@ucla.edu)!
+
 In this Github, you will find my code, citations, and commentary.
 
 ## Citations
