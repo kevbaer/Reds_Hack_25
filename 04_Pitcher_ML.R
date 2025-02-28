@@ -4,7 +4,6 @@ source("07_Pitcher_FE.R")
 library(tidymodels)
 
 
-
 set.seed(11042004)
 pitcher_split <- initial_split(pitchers_23_hyper, strata = ACTUAL_TIME)
 pitcher_train <- training(pitcher_split)
@@ -18,11 +17,14 @@ rec_2 <-
   step_dummy(all_nominal_predictors())
 
 
-
 xgb_spec <-
   boost_tree(
-    tree_depth = tune(), learn_rate = tune(), loss_reduction = tune(),
-    min_n = tune(), sample_size = tune(), trees = tune()
+    tree_depth = tune(),
+    learn_rate = tune(),
+    loss_reduction = tune(),
+    min_n = tune(),
+    sample_size = tune(),
+    trees = tune()
   ) |>
   set_engine("xgboost") |>
   set_mode("regression")
@@ -35,7 +37,7 @@ set <-
       boosting = xgb_spec
     )
   )
-doParallel::registerDoParallel(cores = 5)
+future::plan("multisession", workers = 5)
 
 grid_ctrl_2 <-
   control_grid(

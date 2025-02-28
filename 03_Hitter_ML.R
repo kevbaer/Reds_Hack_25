@@ -4,7 +4,6 @@ source("06_Batter_FE.R")
 library(tidymodels)
 
 
-
 set.seed(11042004)
 hitter_split <- initial_split(batters_23_hyper, strata = ACTUAL_TIME)
 hitter_train <- training(hitter_split)
@@ -19,8 +18,12 @@ rec_1 <-
 
 xgb_spec <-
   boost_tree(
-    tree_depth = tune(), learn_rate = tune(), loss_reduction = tune(),
-    min_n = tune(), sample_size = tune(), trees = tune()
+    tree_depth = tune(),
+    learn_rate = tune(),
+    loss_reduction = tune(),
+    min_n = tune(),
+    sample_size = tune(),
+    trees = tune()
   ) |>
   set_engine("xgboost") |>
   set_mode("regression")
@@ -33,7 +36,7 @@ set <-
       boosting = xgb_spec
     )
   )
-doParallel::registerDoParallel(cores = 5)
+future::plan("multisession", workers = 5)
 
 grid_ctrl <-
   control_grid(
